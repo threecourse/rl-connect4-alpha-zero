@@ -1,0 +1,94 @@
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", "Noto Sans Japanese", "ヒラギノ角ゴ ProN W3", Meiryo, sans-serif;
+}
+
+.title-top {
+    margin-top: 20px;
+}
+
+.cell {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    border: 1px solid silver;
+    float: left;
+}
+
+.cell-content {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    line-height: 60px;
+}
+
+.cell-content.empty {
+    background-color: #007700;
+}
+
+.cell-content.legal-yes-human {
+    background-color: #00FF00;
+}
+
+.cell-content.legal-yes-cpu {
+    background-color: #007777;
+}
+
+.cell-content.legal-no {
+    background-color: #007700;
+}
+
+.cell-image {
+    position: absolute;
+    top: 10%;
+    left: 10%;
+    width: 80%;
+    height: 80%;
+    pointer-events: none;
+}
+
+
+.cell-text1 {
+    fill: coral;
+    position: absolute;
+    top: 1%;
+    left: 1%;
+    pointer-events: none;
+}
+
+.cell-text2 {
+    fill: coral;
+    position: absolute;
+    top: 70%;
+    left: 1%;
+    pointer-events: none;
+}
+
+.cell-text3 {
+    fill: coral;
+    position: absolute;
+    top: 1%;
+    left: 70%;
+    pointer-events: none;
+}
+
+.cell-text4 {
+    fill: coral;
+    position: absolute;
+    top: 70%;
+    left: 70%;
+    pointer-events: none;
+}
+
+#batsu {
+    fill: #eeeeee;
+}
+
+#maru {
+    fill-opacity: 0.0;
+    stroke: #eeeeee;
+}
+
+.textarea {
+    resize: none;
+    font-family: "Courier New";
+}

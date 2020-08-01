@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ static_url('css/index.css') }}" type="text/css"
+      xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml"/>
+<script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.5.17/vue.min.js" type="text/javascript"></script>
+{% end %}
+
+{% block bottom %}
+<script type="text/javascript" src="{{ static_url('js/index.js') }}"></script>
+{% end %}
+
+{% block body %}
+<svg display="none">
+    <defs>
+        <!-- https://icooon-mono.com より取得 -->
+        <symbol id="batsu" viewBox="-50 -50 612 612">
+            <polygon class="st0"
+                     points="512,52.535 459.467,0.002 256.002,203.462 52.538,0.002 0,52.535 203.47,256.005 0,459.465
+		                52.533,511.998 256.002,308.527 459.467,511.998 512,459.475 308.536,256.005">
+            </polygon>
+        </symbol>
+        <symbol id="maru" viewBox="0 0 512 512">
+            <circle cx="256" cy="256" r="212" stroke-width="60"/>
+        </symbol>
+    </defs>
+</svg>
+
+<div class="container">
+
+    <p class="title-top">
+    <h1 class="title">Visualizer</h1>
+    </p>
+
+    <div id="app">
+
+        <div class="columns">
+
+            <div id="controller" class="column is-one-fifth">
+                <div>
+                    <button class="button" style="margin-left: 10px" @click="new_game">Start Game
+                    </button>
+                    <button class="button" style="margin-left: 10px" @click="load_game">Load Game
+                    </button>
+                    <div style="height: 5px"></div>
+                    <div class="control" style="margin-left: 10px">
+                        <textarea class="textarea" v-model="board_state_string" placeholder="board state"
+                                  rows="11"></textarea>
+                    </div>
+
+                    <div style="height: 10px"></div>
+                    <button class="button" style="margin-left: 10px" @click="think_ai">think_ai</button>
+                    <button class="button" style="margin-left: 10px" @click="move_ai">move_ai</button>
+
+                    <div style="height: 20px"></div>
+                    <div style="margin-left: 10px">[Q, V<br/> &nbsp;N, P]</div>
+                </div>
+            </div>
+
+            <div class="column">
+                <div v-for="(n, ri) in H">
+                    <div v-for="(n, ci)  in W" class="cell">
+                        <div @click="try_move(ri, ci)"
+                             v-bind:class="['cell-content', getCellAttribute(ri, ci)]">
+                        </div>
+                        <svg class="cell-image">
+                            <use v-bind="{'xlink:href':'#'+ getCellImage(ri, ci)}"></use>
+                        </svg>
+                        <svg class="cell-text1">
+                            <text x="0" y="14" font-size="12">[[get_q_value(ri, ci)]]</text>
+                        </svg>
+                        <svg class="cell-text2">
+                            <text x="0" y="14" font-size="12">[[get_n_value(ri, ci)]]</text>
+                        </svg>
+                        <svg class="cell-text3">
+                            <text x="0" y="14" font-size="12">[[get_v_value(ri, ci)]]</text>
+                        </svg>
+                        <svg class="cell-text4">
+                            <text x="0" y="14" font-size="12">[[get_p_value(ri, ci)]]</text>
+                        </svg>
+
+                    </div>
+                    <br style="clear:both"/>
+                </div>
+
+                <div style="height: 10px"></div>
+
+                <h4 class="title is-4">Message</h4>
+                <pre style="width: 600px; font-size: 18px">[[message]]<br/>[[message2]]</pre>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% end %}

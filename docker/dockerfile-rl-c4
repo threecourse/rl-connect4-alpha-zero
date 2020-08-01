@@ -1,0 +1,93 @@
+FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu18.04
+# reference: https://hub.docker.com/r/nejumi/tools_for_kaggle/dockerfile
+
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && \
+    apt-get install -y software-properties-common && \
+    add-apt-repository ppa:git-core/ppa && \
+    apt-get update && \
+    apt-get install -y git build-essential cmake && \
+    git --version
+
+RUN apt-get update && \
+apt-get install -y \
+curl \
+wget \
+bzip2 \
+ca-certificates \
+libglib2.0-0 \
+libxext6 \
+libsm6 \
+libxrender1 \
+git \
+vim \
+mercurial \
+subversion \
+cmake \
+libboost-dev \
+libboost-system-dev \
+libboost-filesystem-dev \
+gcc \
+g++
+
+# Add OpenCL ICD files for LightGBM
+RUN mkdir -p /etc/OpenCL/vendors && \
+echo "libnvidia-opencl.so.1" > /etc/OpenCL/vendors/nvidia.icd
+
+##############################################################################
+# TINI
+##############################################################################
+
+# Install tini
+ENV TINI_VERSION v0.14.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
+RUN chmod +x /tini
+
+##############################################################################
+# anaconda python
+##############################################################################
+RUN apt-get update && \
+    apt-get install -y wget bzip2 ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN wget https://repo.continuum.io/archive/Anaconda3-2019.03-Linux-x86_64.sh && \
+    /bin/bash Anaconda3-2019.03-Linux-x86_64.sh -b -p /opt/conda && \
+    rm Anaconda3-2019.03-Linux-x86_64.sh
+
+ENV PATH /opt/conda/bin:$PATH
+RUN pip install --upgrade pip
+
+RUN apt-get update && \
+    # Anaconda's build of gcc is way out of date; monkey-patch some linking problems that affect
+    # packages like xgboost and Shapely
+    rm /opt/conda/lib/libstdc++* && rm /opt/conda/lib/libgomp.* && \
+    ln -s /usr/lib/x86_64-linux-gnu/libgomp.so.1 /opt/conda/lib/libgomp.so.1 && \
+    ln -s /usr/lib/x86_64-linux-gnu/libstdc++.so.6 /opt/conda/lib/libstdc++.so.6
+
+##############################################################################
+# user directory
+##############################################################################
+
+ARG USER
+ARG UID
+ARG GID
+RUN mkdir /home/$USER && chown $UID:$GID /home/$USER
+
+##############################################################################
+# neural net libraies
+##############################################################################
+
+RUN pip --no-cache-dir install tensorflow-gpu==1.14.0
+RUN cd /usr/local/src && pip --no-cache-dir install tensorflow-gpu==1.14.0
+RUN pip install keras==2.2.5
+
+# for error - could not create cudnn handle: CUDNN_STATUS_INTERNAL_ERROR
+ENV TF_FORCE_GPU_ALLOW_GROWTH true
+
+##############################################################################
+# other libraries
+##############################################################################
+
+RUN pip install tornado==4.5.3  # downgrade tornado for asyncio
+RUN pip install python-dotenv moke_config
+RUN pip install mypy==0.761

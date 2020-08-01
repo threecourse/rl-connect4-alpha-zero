@@ -1,0 +1,56 @@
+type: c4-solver
+
+env:
+  env_solver_turn: 7
+
+common_player: &common_player
+  player_type: "alphazero"
+  simulation_num_per_move: 60
+  thinking_loop: 1
+  allowed_resign_turn: 70
+  c_puct: 5
+  start_rethinking_turn: 2
+  schedule_of_simulation_num_per_move:
+    - [0, 30]
+    - [300, 60]
+
+solver_player: &solver_player
+  player_type: "solver"
+  solver_player_random_ratio: 0.2
+
+self_play:
+  multi_process_num: 12
+  nb_game_in_file: 1
+  max_file_num: 800
+  drop_draw_game_rate: 0.0
+  player:
+    <<: *common_player
+
+optimize:
+  batch_size: 64
+  delete_self_play_after_number_of_training: 1
+  min_data_size_to_learn: 200
+  save_model_steps: 25
+  logging_per_steps: 5
+  wait_after_save_model_ratio: 0
+  lr_schedules:
+    - [0, 0.01]
+    - [500000, 0.001]
+    - [1000000, 0.0001]
+    - [1500000, 0.0001]
+
+evaluate:
+  game_num: 20
+  player1:
+    <<: *common_player
+  player2:
+    <<: *solver_player
+
+play_gui:
+  player:
+    <<: *common_player
+
+model:
+  cnn_filter_num: 128
+  cnn_filter_size: 3
+  res_layer_num: 10
