@@ -1,5 +1,8 @@
 ## Connect Fourのアルファ碁ゼロメソッドによる強化学習
 
+以下ブログ記事も参考にして下さい：  
+https://threecourse.hatenablog.com/entry/2020/08/02/115804
+
 ### docker
 
 * nvidia-docker2 を利用
